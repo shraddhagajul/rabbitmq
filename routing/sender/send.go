@@ -23,5 +23,5 @@ func main() {
 
 	body = "error"
 	err = ch.Publish("logs_direct", "error", false, false, amqp.Publishing{ContentType: "text/plain", Body: []byte(body)})
-	util.FailOnError(err, "Failed to push a message to routing key info-error")
+	util.FailOnError(err, "Failed to push a message to routing key error")
 }

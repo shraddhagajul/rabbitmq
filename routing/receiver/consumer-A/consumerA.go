@@ -22,17 +22,11 @@ func main() {
 	q, err := ch.QueueDeclare("info-error-msgs", false, false, true, false, nil)
 	util.FailOnError(err, "Failed to declare a info-error-msgs queue")
 
-	eq, err := ch.QueueDeclare("error-msgs", false, false, true, false, nil)
-	util.FailOnError(err, "Failed to declare a error-msgs queue")
-
 	err = ch.QueueBind(q.Name, "info", "logs_direct", false, nil)
 	util.FailOnError(err, "Failed to bind queue "+q.Name)
 
 	err = ch.QueueBind(q.Name, "error", "logs_direct", false, nil)
 	util.FailOnError(err, "Failed to bind queue "+q.Name)
-
-	err = ch.QueueBind(eq.Name, "error", "logs_direct", false, nil)
-	util.FailOnError(err, "Failed to bind queue "+eq.Name)
 
 	qmsgs, err := ch.Consume(q.Name, "", true, false, false, false, nil)
 	util.FailOnError(err, "Failed to register a consumer")
@@ -42,14 +36,6 @@ func main() {
 	go func() {
 		for d := range qmsgs {
 			log.Printf(" q msgs [x] %s", d.Body)
-		}
-	}()
-
-	eqMsgs, err := ch.Consume(eq.Name, "", true, false, false, false, nil)
-	util.FailOnError(err, "Failed to register a consumer")
-	go func() {
-		for d := range eqMsgs {
-			log.Printf(" eq msgs [x] %s", d.Body)
 		}
 	}()
 
